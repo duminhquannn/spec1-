@@ -112,6 +112,7 @@
                 document.body.classList.remove("sketch4-active");
                 applyBarPalette(barPalettes.lime);
                 sketch2Section.scrollIntoView({ behavior: "smooth", block: "start" });
+                window.parent.postMessage({ type: 'themeRequest', theme: 'bach' }, '*');
             }
 
             function scrollToSketch3() {
@@ -130,6 +131,7 @@
                 document.body.classList.add("sketch4-active");
                 applyBarPalette(barPalettes.blue);
                 sketch4Section.scrollIntoView({ behavior: "smooth", block: "start" });
+                window.parent.postMessage({ type: 'themeRequest', theme: 'default' }, '*');
             }
 
             function updateSectionActiveStates() {
@@ -251,6 +253,7 @@
                         document.body.classList.add("sketch2-active");
                         window.scrollTo({ top: 0, left: 0, behavior: "instant" });
                         applyBarPalette(barPalettes.lime);
+                        window.parent.postMessage({ type: 'themeRequest', theme: 'bach' }, '*');
                     }, 900);
                 }, 4000);
             });

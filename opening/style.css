@@ -105,29 +105,3 @@ body, html {
 	opacity: 0.85;
 }
 
-@media (max-width: 760px) {
-	.opening-footer {
-		bottom: 6vh;
-		justify-content: flex-start;
-		gap: 0;
-		overflow-x: auto;
-		padding: 0 8vw 0.4rem;
-		pointer-events: auto;
-		scroll-padding-inline: 8vw;
-		scroll-snap-type: x mandatory;
-		scrollbar-width: none;
-		-webkit-overflow-scrolling: touch;
-		touch-action: pan-x;
-	}
-
-	.opening-footer::-webkit-scrollbar {
-		display: none;
-	}
-
-	.opening-member {
-		flex: 0 0 84vw;
-		padding: 0 6vw;
-		scroll-snap-align: center;
-		scroll-snap-stop: always;
-	}
-}

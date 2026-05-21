@@ -27,7 +27,7 @@
       <button class="page-menu__item" type="button" data-page="Wrapped">Wrapped</button>
       <button class="page-menu__item" type="button" data-page="Admission">Admission</button>
       <button class="page-menu__item" type="button" data-page="Recovery">Recovery</button>
-      <button class="page-menu__item" type="button" data-page="Goals">Goals</button>
+      <button class="page-menu__item" type="button" data-page="About">About</button>
     </nav>
   </header>
 
@@ -57,12 +57,12 @@
   </footer>
 
   <div class="container" id="scroll-container">
-    <iframe id="opening-frame" src="opening/opening.html"></iframe>
+    <iframe src="opening/opening.html"></iframe>
     <iframe src="info/info.html"></iframe>
-    <iframe src="quan_code/quan.html"></iframe>
+    <iframe src="quan_code/index.html"></iframe>
     <iframe src="bach_code/code/bach.html"></iframe>
     <iframe src="chau_code/index.html"></iframe>
-    <iframe src="about_us/about_us.html"></iframe>
+    <iframe src="about_us/about.html"></iframe>
   </div>
 
   <script>
@@ -71,6 +71,7 @@
     const container = document.getElementById('scroll-container');
     const frames = Array.from(container.querySelectorAll('iframe'));
     let isAnimating = false;
+    let themeOverride = null;
 
     function broadcastPageVisibility() {
       frames.forEach((frame, pageIndex) => {
@@ -85,6 +86,12 @@
     }
 
     window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'themeRequest') {
+        themeOverride = event.data.theme === 'bach' ? 'bach' : null;
+        updateTheme();
+        return;
+      }
+
       if (isAnimating) return;
 
       if (event.data === 'scrollDown' && currentPage < totalPages - 1) {
@@ -99,8 +106,11 @@
     const BACH_PAGE = 3;
     const PAGE_LABELS = ['Home', 'Survey', 'Wrapped', 'Admission', 'Recovery', 'Goals'];
 
+    const QUAN_PAGE = 2;
+
     function updateTheme() {
-      document.body.classList.toggle('theme-bach', currentPage === BACH_PAGE);
+      const isGreen = currentPage === BACH_PAGE || (currentPage === QUAN_PAGE && themeOverride === 'bach');
+      document.body.classList.toggle('theme-bach', isGreen);
     }
 
     function updatePageLabel() {
@@ -125,7 +135,7 @@
       updatePageLabel();
       setTimeout(() => {
         isAnimating = false;
-      }, 1500);
+      }, 1500); // Đợi trượt xong và triệt tiêu quán tính cuộn (1.5s)
     }
 
     frames.forEach((frame) => {

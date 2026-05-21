@@ -8,8 +8,8 @@ const instructionPanel = document.querySelector(".instruction-panel");
 const previousPageButton = document.querySelector(".nav-arrow:first-of-type");
 const nextPageButton = document.querySelector(".nav-arrow:last-of-type");
 const siteLogo = document.querySelector(".site-logo");
-const openingFrame = document.getElementById("opening-frame");
 const pageNames = Array.from(pageMenuItems).map((item) => item.dataset.page || item.textContent.trim());
+let currentPageIndex = Math.max(0, pageNames.indexOf(currentPageLabel?.textContent.trim() || "Home"));
 
 if (soundButton) {
   soundButton.addEventListener("click", () => {
@@ -90,96 +90,3 @@ siteLogo?.addEventListener("click", () => {
   }
   setMenuOpen(false);
 });
-
-function setupOpeningMobileTextSnap() {
-  if (!openingFrame?.contentDocument) return;
-
-  const frameDocument = openingFrame.contentDocument;
-  const footer = frameDocument.querySelector(".opening-footer");
-  const members = Array.from(frameDocument.querySelectorAll(".opening-member"));
-  const mobileQuery = window.matchMedia("(max-width: 760px)");
-
-  if (!footer || members.length === 0) return;
-
-  if (typeof openingFrame.cleanupOpeningSnap === "function") {
-    openingFrame.cleanupOpeningSnap();
-  }
-
-  let startX = 0;
-  let startY = 0;
-  let startScrollLeft = 0;
-  let isTracking = false;
-  let didMoveHorizontally = false;
-
-  function getMemberStep() {
-    return members[0]?.getBoundingClientRect().width || footer.clientWidth;
-  }
-
-  function snapToNearestMember() {
-    const step = getMemberStep();
-    const maxIndex = members.length - 1;
-    const nextIndex = Math.max(0, Math.min(maxIndex, Math.round(footer.scrollLeft / step)));
-
-    footer.scrollTo({
-      left: nextIndex * step,
-      behavior: "smooth"
-    });
-  }
-
-  function onTouchStart(event) {
-    if (!mobileQuery.matches || event.touches.length !== 1) return;
-
-    const touch = event.touches[0];
-    startX = touch.clientX;
-    startY = touch.clientY;
-    startScrollLeft = footer.scrollLeft;
-    isTracking = true;
-    didMoveHorizontally = false;
-  }
-
-  function onTouchMove(event) {
-    if (!isTracking || !mobileQuery.matches || event.touches.length !== 1) return;
-
-    const touch = event.touches[0];
-    const deltaX = touch.clientX - startX;
-    const deltaY = touch.clientY - startY;
-
-    if (Math.abs(deltaX) < 8 && Math.abs(deltaY) < 8) return;
-
-    if (Math.abs(deltaX) <= Math.abs(deltaY)) {
-      isTracking = false;
-      return;
-    }
-
-    didMoveHorizontally = true;
-    footer.scrollLeft = startScrollLeft - deltaX;
-    event.preventDefault();
-  }
-
-  function onTouchEnd() {
-    if (isTracking && didMoveHorizontally) {
-      snapToNearestMember();
-    }
-    isTracking = false;
-    didMoveHorizontally = false;
-  }
-
-  frameDocument.addEventListener("touchstart", onTouchStart, { passive: true });
-  frameDocument.addEventListener("touchmove", onTouchMove, { passive: false });
-  frameDocument.addEventListener("touchend", onTouchEnd, { passive: true });
-  frameDocument.addEventListener("touchcancel", onTouchEnd, { passive: true });
-
-  openingFrame.cleanupOpeningSnap = () => {
-    frameDocument.removeEventListener("touchstart", onTouchStart);
-    frameDocument.removeEventListener("touchmove", onTouchMove);
-    frameDocument.removeEventListener("touchend", onTouchEnd);
-    frameDocument.removeEventListener("touchcancel", onTouchEnd);
-    openingFrame.cleanupOpeningSnap = null;
-  };
-}
-
-openingFrame?.addEventListener("load", setupOpeningMobileTextSnap);
-
-if (openingFrame?.contentDocument?.readyState === "complete") {
-  setupOpeningMobileTextSnap();
-}

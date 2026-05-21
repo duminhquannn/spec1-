@@ -1890,21 +1890,21 @@ window.DurationClickCount = DurationClickCount;
         frame2Text.classList.toggle('is-visible', isVisible);
       }
       
-      function tryScrollBoundary(now, deltaY, message) {
+      function tryScrollBoundary(now, deltaY, message, target) {
         if (now - scrollInput.lastNavMs < scrollInput.cooldownMs) return true;
-      
+
         scrollInput.delta += deltaY;
         const crossedThreshold =
           deltaY > 0
             ? scrollInput.delta > scrollInput.threshold
             : scrollInput.delta < -scrollInput.threshold;
-      
+
         if (crossedThreshold) {
-          window.parent.postMessage(message, '*');
+          (target || window.parent).postMessage(message, '*');
           scrollInput.lastNavMs = now;
           scrollInput.delta = 0;
         }
-      
+
         return true;
       }
       
@@ -1934,10 +1934,10 @@ window.DurationClickCount = DurationClickCount;
               scrollInput.delta = 0;
               return;
             }
-            tryScrollBoundary(now, event.deltaY, 'scrollDown');
+            tryScrollBoundary(now, event.deltaY, 'scrollDown', window);
             return;
           }
-      
+
           if (event.deltaY < 0 && !scrollScene.started && !scrollScene.active && !scrollScene.completed) {
             event.preventDefault();
             tryScrollBoundary(now, event.deltaY, 'scrollUp');
@@ -2600,7 +2600,7 @@ window.DurationClickCount = DurationClickCount;
         lastWheelMs = now;
         wheelDelta = 0;
       } else if (previousTarget === 0 && atTop && wheelDelta < -250) {
-        window.parent.postMessage("scrollUp", "*");
+        window.postMessage("scrollUp", "*");
         lastWheelMs = now;
         wheelDelta = 0;
       }
@@ -3447,11 +3447,11 @@ window.DurationClickCount = DurationClickCount;
           }
 
           if (previousTarget === 1 && atBottom && scrollControl.acc > 250) {
-            window.parent.postMessage("scrollDown", "*");
+            window.postMessage("scrollDown", "*");
             scrollControl.lastMsgMs = now;
             scrollControl.acc = 0;
           } else if (previousTarget === 0 && atTop && scrollControl.acc < -250) {
-            window.parent.postMessage("scrollUp", "*");
+            window.postMessage("scrollUp", "*");
             scrollControl.lastMsgMs = now;
             scrollControl.acc = 0;
           }

@@ -267,16 +267,6 @@ function draw() {
     drawStageOneText();
     drawReelImage();
 
-    if (!isMobile()) {
-      fill(255, 80, 80);
-      noStroke();
-      textAlign(CENTER, CENTER);
-      textSize(36);
-      textFont(stageOneTextFont);
-      drawingContext.font = `${stageOneTextWeight} 36px "${stageOneTextFont}"`;
-      text(floor(progress) + "%", 0, 0);
-    }
-
   } else {
     if (finalMode) {
       noCursor();

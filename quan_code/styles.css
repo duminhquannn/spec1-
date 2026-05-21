@@ -5,6 +5,15 @@
   --bar-color-bottom: #ba0d35;
 }
 
+html, body {
+    scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none;
+}
+
 html {
     height: 100%;
     scroll-behavior: smooth;
