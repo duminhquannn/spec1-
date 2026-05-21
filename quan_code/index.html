@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>p5 Starter</title>
+    <link rel="stylesheet" href="https://use.typekit.net/guk5ptg.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="sketch2-locked">
+    <div class="header-bg-bar" aria-hidden="true"></div>
+
+    <header class="top-bar">
+        <div class="col-left">
+            <img class="logo-image" src="media/Asset 123.svg" alt="Untangle logo" />
+        </div>
+        <div class="col-center year-title">2026</div>
+        <div class="col-right year-title">Withdrawal Symptoms</div>
+    </header>
+
+    <div id="sketch-canvas"></div>
+
+    <section id="sketch2-section" aria-label="Sketch 2">
+        <div id="sketch2-canvas"></div>
+        <div class="sketch2-copy sketch2-copy-left">Most people addicted to the internet..</div>
+        <div class="sketch2-copy sketch2-copy-right">..spend <span class="sketch2-copy-stat">50 extra minutes</span> scrolling before bed</div>
+         <div class="sketch2-copy sketch2-copy-bot-right"> You don't - and that matters more than you think.</div>
+        <div class="sketch2-frame2-text"></div>
+    </section>
+
+    <section id="sketch4-section" class="sketch4-section" aria-label="Sketch 4">
+        <div id="sketch4-canvas" class="sketch4-canvas" aria-hidden="true"></div>
+        <main class="sketch4-main-content main-content">
+            <div class="text-block block-right">
+                <span>For people with IAD, it's often more than </span>
+                <span class="highlight">100</span>
+                <span> times.</span>
+            </div>
+            <div class="text-block block-left">
+                <span>On average, people pick up their phones around </span>
+                <span class="highlight">58</span>
+                <span> times a day</span>
+            </div>
+            <section class="center-message" aria-live="polite">
+                <h2>You thought checking isn't much each time, but a lot altogether.</h2>
+                <p>Many sessions last a few seconds to around 3-5 minutes, but repeat all day. This pattern is linked to emotional dependence.</p>
+            </section>
+        </main>
+    </section>
+
+    <section id="sketch3-section" class="sketch3-section" aria-label="Sketch 3">
+        <div id="sketch3-canvas" class="sketch3-canvas" aria-hidden="true"></div>
+        <main class="sketch3-main-content">
+            <div></div>
+            <div id="sketch3-primary-copy" class="sketch3-right-copy">
+                Heavy screen use is linked to sleep loss, eye strain, and reduced focus.
+            </div>
+        </main>
+        <section id="sketch3-grid-copy" class="sketch3-grid-copy" aria-hidden="true">
+            <p class="sketch3-grid-copy-top">
+                You thought it wasn't a big deal, but it can turn into something more serious.
+            </p>
+            <p class="sketch3-grid-copy-bottom">
+                Prolonged phone use is linked to carpal tunnel syndrome and neck strain, with up to 22 kg of pressure on your neck when you look down at about 45 degrees.
+            </p>
+        </section>
+    </section>
+
+    <footer class="bottom-bar">
+        <div class="col-left year-title">Untangle</div>
+        <div class="col-center year-title">2026</div>
+        <div class="col-right year-title">Withdrawal Symptoms</div>
+    </footer>
+
+    <div class="footer-bg-bar" aria-hidden="true"></div>
+
+    <script src="libraries/p5.min.js"></script>
+    <script src="text-effects.js"></script>
+    <script src="sketch.js"></script>
+    <script>
+        (function () {
+            let hasScheduledSketch2Scroll = false;
+            const barPalettes = {
+                red: ["#f0374d", "#e51d42", "#ba0d35"],
+                lime: ["#adf218", "#91d914", "#68a900"],
+                blue: ["#1840f2", "#1234c9", "#08207c"]
+            };
+
+            function applyBarPalette(palette) {
+                document.body.style.setProperty("--bar-color-top", palette[0]);
+                document.body.style.setProperty("--bar-color-mid", palette[1]);
+                document.body.style.setProperty("--bar-color-bottom", palette[2]);
+            }
+
+            function updateBarColors() {
+                if (!document.body.classList.contains("sketch2-active")) {
+                    applyBarPalette(barPalettes.red);
+                } else if (document.body.classList.contains("sketch4-active")) {
+                    applyBarPalette(barPalettes.blue);
+                } else if (document.body.classList.contains("sketch3-active")) {
+                    applyBarPalette(barPalettes.red);
+                } else {
+                    applyBarPalette(barPalettes.lime);
+                }
+            }
+
+            function scrollToSketch2() {
+                const sketch2Section = document.getElementById("sketch2-section");
+                if (!sketch2Section) return;
+                document.body.classList.remove("sketch3-active");
+                document.body.classList.remove("sketch4-active");
+                applyBarPalette(barPalettes.lime);
+                sketch2Section.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+
+            function scrollToSketch3() {
+                const sketch3Section = document.getElementById("sketch3-section");
+                if (!sketch3Section) return;
+                document.body.classList.add("sketch3-active");
+                document.body.classList.remove("sketch4-active");
+                applyBarPalette(barPalettes.red);
+                sketch3Section.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+
+            function scrollToSketch4() {
+                const sketch4Section = document.getElementById("sketch4-section");
+                if (!sketch4Section) return;
+                document.body.classList.remove("sketch3-active");
+                document.body.classList.add("sketch4-active");
+                applyBarPalette(barPalettes.blue);
+                sketch4Section.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+
+            function updateSectionActiveStates() {
+                const sketch3Section = document.getElementById("sketch3-section");
+                const sketch4Section = document.getElementById("sketch4-section");
+                if (!sketch3Section || !document.body.classList.contains("sketch2-active")) return;
+
+                const sketch3Bounds = sketch3Section.getBoundingClientRect();
+                const sketch4Bounds = sketch4Section ? sketch4Section.getBoundingClientRect() : null;
+                const sketch3Centered = sketch3Bounds.top <= window.innerHeight * 0.55 && sketch3Bounds.bottom >= window.innerHeight * 0.45;
+                const sketch4Centered = sketch4Bounds && sketch4Bounds.top <= window.innerHeight * 0.55 && sketch4Bounds.bottom >= window.innerHeight * 0.45;
+
+                document.body.classList.toggle("sketch3-active", sketch3Centered && !sketch4Centered);
+                document.body.classList.toggle("sketch4-active", Boolean(sketch4Centered));
+                updateBarColors();
+            }
+
+            function applySketch2TextEffects() {
+                if (!window.UntangleTextFx) return;
+
+                document
+                    .querySelectorAll("#sketch2-section .sketch2-copy, #sketch2-section .sketch2-frame2-text")
+                    .forEach(function (element) {
+                        if (element.textContent.trim()) {
+                            window.UntangleTextFx.prepare(element);
+                        }
+                    });
+            }
+
+            applySketch2TextEffects();
+            updateBarColors();
+
+            window.addEventListener("message", function (event) {
+                if (event.data === "scrollDown") {
+                    if (document.body.classList.contains("sketch3-active")) {
+                        return;
+                    }
+                    if (document.body.classList.contains("sketch4-active")) {
+                        scrollToSketch3();
+                        return;
+                    }
+                    if (document.body.classList.contains("sketch2-active")) {
+                        scrollToSketch4();
+                    }
+                }
+
+                if (event.data === "scrollUp") {
+                    if (document.body.classList.contains("sketch3-active")) {
+                        scrollToSketch4();
+                        return;
+                    }
+                    if (document.body.classList.contains("sketch4-active")) {
+                        scrollToSketch2();
+                    }
+                }
+            });
+            window.addEventListener("scroll", function () {
+                updateSectionActiveStates();
+            }, { passive: true });
+            window.addEventListener("resize", updateBarColors, { passive: true });
+
+            window.addEventListener("untangle:underlying-submit", function (event) {
+                if (hasScheduledSketch2Scroll) return;
+                hasScheduledSketch2Scroll = true;
+
+                const submittedTimeOfDayAnimations = Number(
+                    event.detail && Number.isFinite(event.detail.timeOfDayAssetAnimationCount)
+                        ? event.detail.timeOfDayAssetAnimationCount
+                        : window.TimeOfDayAssetAnimationCount || 0
+                );
+                const submittedTimeOfDayIndex = Number(
+                    event.detail && Number.isFinite(event.detail.timeOfDayAssetAnimationIndex)
+                        ? event.detail.timeOfDayAssetAnimationIndex
+                        : submittedTimeOfDayAnimations % 3
+                );
+                const sketch2Version = submittedTimeOfDayAnimations % 3 === 0 ? "version1" : "version2";
+
+                window.setTimeout(function () {
+                    const sketch2Section = document.getElementById("sketch2-section");
+                    if (!sketch2Section) return;
+
+                    const copyLeft = sketch2Section.querySelector(".sketch2-copy-left");
+                    const copyRight = sketch2Section.querySelector(".sketch2-copy-right");
+                    const copyBottomRight = sketch2Section.querySelector(".sketch2-copy-bot-right");
+
+                    if (sketch2Version === "version1") {
+                        if (copyLeft) copyLeft.textContent = "People addicted to the internet..";
+                        if (copyRight) copyRight.innerHTML = '..spend <span class="sketch2-copy-stat">50 extra minutes</span> scrolling before bed.';
+                        if (copyBottomRight) copyBottomRight.textContent = "Sound familiar?";
+                    } else {
+                        if (copyLeft) copyLeft.textContent = "Most people addicted to the internet..";
+                        if (copyRight) copyRight.innerHTML = '..spend <span class="sketch2-copy-stat">50 extra minutes</span> scrolling before bed';
+                        if (copyBottomRight) copyBottomRight.textContent = "You don't - and that matters more than you think.";
+                    }
+
+                    const frame2Text = sketch2Section.querySelector(".sketch2-frame2-text");
+                    if (frame2Text) {
+                        frame2Text.textContent = sketch2Version === "version1"
+                            ? "You're hurting yourself. That 50 minutes isn't relaxing you - it's stealing sleep you can't get back."
+                            : "You're on the right track. That 50 minutes is protecting your sleep - and most people have already given it up without noticing.";
+                    }
+
+                    applySketch2TextEffects();
+
+                    document.body.classList.remove("sketch2-locked");
+                    document.body.classList.remove("sketch2-version1", "sketch2-version2");
+                    document.body.classList.add("sketch2-" + sketch2Version);
+                    window.dispatchEvent(new CustomEvent("untangle:sketch2-activate", {
+                        detail: {
+                            version: sketch2Version,
+                            timeOfDayAssetAnimationCount: submittedTimeOfDayAnimations,
+                            timeOfDayAssetAnimationIndex: submittedTimeOfDayIndex
+                        }
+                    }));
+                    applyBarPalette(barPalettes.lime);
+                    sketch2Section.scrollIntoView({ behavior: "smooth", block: "start" });
+
+                    window.setTimeout(function () {
+                        document.body.classList.add("sketch2-active");
+                        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+                        applyBarPalette(barPalettes.lime);
+                    }, 900);
+                }, 4000);
+            });
+        })();
+    </script>
+</body>
+</html>

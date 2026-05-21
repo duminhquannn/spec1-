@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opening Page</title>
+ <link rel="stylesheet" href="https://use.typekit.net/guk5ptg.css">
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="layout-container opening-layout">
+    <div id="p5-bg" class="p5-bg" aria-hidden="true"></div>
+
+    <main class="opening-main">
+      <h1 class="opening-title">UNTANGLED</h1>
+      <p class="opening-subtitle">by Mixi Team</p>
+    </main>
+
+    <footer class="opening-footer">
+      <div class="opening-member">
+        <span class="member-id">s3992383</span>
+        <span class="member-name">Dinh Nguyen Bao Chau</span>
+      </div>
+      <div class="opening-member">
+        <span class="member-id">s4038328</span>
+        <span class="member-name">Tran Phuong Bach</span>
+      </div>
+      <div class="opening-member">
+        <span class="member-id">s4112455</span>
+        <span class="member-name">Du Minh Quan</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+  <script src="./sketch.js"></script>
+  <script>
+    function setOpeningSketchActive(isActive) {
+      if (typeof window.setSketchOpeningActive === 'function') {
+        window.setSketchOpeningActive(isActive);
+      }
+    }
+
+    window.addEventListener('message', (event) => {
+      const data = event.data;
+      if (!data || data.type !== 'pageVisibility') return;
+      setOpeningSketchActive(Boolean(data.isActive));
+    });
+
+    let wheelDelta = 0;
+    let lastMessageTime = 0;
+    window.addEventListener('wheel', (event) => {
+      const now = Date.now();
+      if (now - lastMessageTime < 1500) {
+        wheelDelta = 0; // Đang trong thời gian chuyển trang, bỏ qua quán tính
+        return;
+      }
+      
+      wheelDelta += event.deltaY;
+      if (wheelDelta > 120) { // Cần một lực cuộn đủ lớn (giảm độ nhạy)
+        window.parent.postMessage('scrollDown', '*');
+        lastMessageTime = now;
+        wheelDelta = 0;
+      } else if (wheelDelta < 0) {
+        wheelDelta = 0;
+      }
+    }, { passive: true });
+  </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Roll Film Interaction</title>
+
+  <link rel="stylesheet" href="https://use.typekit.net/ppk2tsj.css">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
+</head>
+
+<body>
+  <script src="sketch.js"></script>
+  <script>
+    let currentPage = 0;
+    const totalPages = 6;
+    const container = document.getElementById('scroll-container');
+    const frames = Array.from(container.querySelectorAll('iframe'));
+    let isAnimating = false;
+
+    function broadcastPageVisibility() {
+      frames.forEach((frame, pageIndex) => {
+        if (!frame.contentWindow) return;
+        frame.contentWindow.postMessage({
+          type: 'pageVisibility',
+          pageIndex,
+          activeIndex: currentPage,
+          isActive: pageIndex === currentPage
+        }, '*');
+      });
+    }
+
+    window.addEventListener('message', (event) => {
+      if (isAnimating) return;
+
+      if (event.data === 'scrollDown' && currentPage < totalPages - 1) {
+        currentPage++;
+        updateScroll();
+      } else if (event.data === 'scrollUp' && currentPage > 0) {
+        currentPage--;
+        updateScroll();
+      }
+    });
+
+    function updateScroll() {
+      isAnimating = true;
+      container.style.transform = `translateY(-${currentPage * 100}vh)`;
+      broadcastPageVisibility();
+      setTimeout(() => {
+        isAnimating = false;
+      }, 1500);
+    }
+
+    frames.forEach((frame) => {
+      frame.addEventListener('load', broadcastPageVisibility);
+    });
+
+    broadcastPageVisibility();
+  </script>
+</body>
+</html>

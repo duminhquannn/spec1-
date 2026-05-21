@@ -1,0 +1,123 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  margin: 0;
+  background: #1840f2;
+  font-family: "forma-djr-text", "Forma DJR Text", sans-serif;
+}
+
+html {
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body {
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+.p5-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.p5-bg canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.goals-content {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  min-height: 100vh;
+  padding: clamp(82px, 13vh, 126px) clamp(24px, 7vw, 96px) clamp(260px, 34vh, 380px);
+  color: #ffffff;
+  text-align: center;
+  pointer-events: none;
+}
+
+.goals-kicker {
+  margin: 0 0 0.8rem;
+  font-size: clamp(1rem, 1.5vw, 1.45rem);
+  text-transform: uppercase;
+}
+
+.goals-content h1 {
+  max-width: 100%;
+  margin: 0;
+  font-size: clamp(3.2rem, 9vw, 9rem);
+  font-weight: 900;
+  line-height: 0.82;
+  text-transform: uppercase;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.goals-copy {
+  max-width: 760px;
+  margin: clamp(1.2rem, 3vh, 2.4rem) 0 0;
+  font-size: clamp(1.25rem, 2.3vw, 2.35rem);
+  line-height: 1.08;
+}
+
+.team-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 4vw, 5rem);
+  width: min(920px, 88vw);
+  margin-top: clamp(1.8rem, 5vh, 3.4rem);
+}
+
+.team-list div {
+  display: grid;
+  gap: 0.35rem;
+  justify-items: center;
+}
+
+.team-list img {
+  width: min(100%, 230px);
+  aspect-ratio: 3 / 4;
+  margin-bottom: 0.55rem;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  object-fit: cover;
+  object-position: center;
+}
+
+.team-list span,
+.team-list strong {
+  font-size: clamp(0.95rem, 1.4vw, 1.35rem);
+  font-weight: 400;
+}
+
+.team-list span {
+  opacity: 0.78;
+}
+
+@media (max-width: 760px) {
+  .goals-content {
+    padding-inline: 22px;
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+
+  .goals-content h1 {
+    width: 100%;
+    font-size: clamp(2.6rem, 13vw, 4.2rem);
+    line-height: 0.9;
+  }
+
+  .team-list {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+}

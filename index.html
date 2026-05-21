@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Untangled</title>
+  <link rel="stylesheet" href="https://use.typekit.net/guk5ptg.css">
+  <link rel="stylesheet" href="ui.css" />
+</head>
+<body>
+  <div class="header-bg-bar"></div>
+  <header class="site-header" aria-label="Site controls">
+    <img class="site-logo" src="logo.png" alt="Untangled" />
+    <nav class="section-nav" aria-label="Section navigation">
+      <button class="nav-arrow" type="button" aria-label="Previous section">&lsaquo;</button>
+      <span class="current-page-label">Home</span>
+      <button class="nav-arrow" type="button" aria-label="Next section">&rsaquo;</button>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-button" type="button" aria-label="Help">?</button>
+      <button class="icon-button sound-button is-active" type="button" aria-label="Sound on" aria-pressed="true"></button>
+      <button class="icon-button menu-button" type="button" aria-label="Menu" aria-controls="page-menu" aria-expanded="false"></button>
+    </div>
+    <nav class="page-menu" id="page-menu" aria-label="Page menu">
+      <button class="page-menu__item is-current" type="button" data-page="Home">Home</button>
+      <button class="page-menu__item" type="button" data-page="Survey">Survey</button>
+      <button class="page-menu__item" type="button" data-page="Wrapped">Wrapped</button>
+      <button class="page-menu__item" type="button" data-page="Admission">Admission</button>
+      <button class="page-menu__item" type="button" data-page="Recovery">Recovery</button>
+      <button class="page-menu__item" type="button" data-page="Goals">Goals</button>
+    </nav>
+  </header>
+
+  <section class="instruction-panel" aria-label="Instruction" aria-hidden="true">
+    <div class="instruction-panel__content">
+      <h1>Instruction</h1>
+      <p>For the interactive experience, there are 4 stages in total. Each stage has its own instructions. Please follow the guidance shown in the footer.</p>
+    </div>
+  </section>
+
+  <div class="footer-bg-bar"></div>
+  <footer class="site-footer" aria-label="Page footer">
+    <span>Untangled</span>
+    <div class="footer-marquee" aria-hidden="true">
+      <div class="footer-marquee__inner">
+        <span>Scroll to Continue</span>
+        <span>Scroll to Continue</span>
+        <span>Scroll to Continue</span>
+        <span>Scroll to Continue</span>
+        <span>Scroll to Continue</span>
+        <span>Scroll to Continue</span>
+        <span>Scroll to Continue</span>
+        <span>Scroll to Continue</span>
+      </div>
+    </div>
+    <span>By Mixi</span>
+  </footer>
+
+  <div class="container" id="scroll-container">
+    <iframe id="opening-frame" src="opening/opening.html"></iframe>
+    <iframe src="info/info.html"></iframe>
+    <iframe src="quan_code/quan.html"></iframe>
+    <iframe src="bach_code/code/bach.html"></iframe>
+    <iframe src="chau_code/index.html"></iframe>
+    <iframe src="about_us/about_us.html"></iframe>
+  </div>
+
+  <script>
+    let currentPage = 0;
+    const totalPages = 6;
+    const container = document.getElementById('scroll-container');
+    const frames = Array.from(container.querySelectorAll('iframe'));
+    let isAnimating = false;
+
+    function broadcastPageVisibility() {
+      frames.forEach((frame, pageIndex) => {
+        if (!frame.contentWindow) return;
+        frame.contentWindow.postMessage({
+          type: 'pageVisibility',
+          pageIndex,
+          activeIndex: currentPage,
+          isActive: pageIndex === currentPage
+        }, '*');
+      });
+    }
+
+    window.addEventListener('message', (event) => {
+      if (isAnimating) return;
+
+      if (event.data === 'scrollDown' && currentPage < totalPages - 1) {
+        currentPage++;
+        updateScroll();
+      } else if (event.data === 'scrollUp' && currentPage > 0) {
+        currentPage--;
+        updateScroll();
+      }
+    });
+
+    const BACH_PAGE = 3;
+    const PAGE_LABELS = ['Home', 'Survey', 'Wrapped', 'Admission', 'Recovery', 'Goals'];
+
+    function updateTheme() {
+      document.body.classList.toggle('theme-bach', currentPage === BACH_PAGE);
+    }
+
+    function updatePageLabel() {
+      const label = document.querySelector('.current-page-label');
+      const menuItems = document.querySelectorAll('.page-menu__item');
+      if (label) label.textContent = PAGE_LABELS[currentPage] || '';
+      menuItems.forEach((item, i) => item.classList.toggle('is-current', i === currentPage));
+    }
+
+    window.navigateToPage = function(pageIndex) {
+      if (isAnimating || pageIndex === currentPage) return;
+      if (pageIndex < 0 || pageIndex >= totalPages) return;
+      currentPage = pageIndex;
+      updateScroll();
+    };
+
+    function updateScroll() {
+      isAnimating = true;
+      container.style.transform = `translateY(-${currentPage * 100}vh)`;
+      broadcastPageVisibility();
+      updateTheme();
+      updatePageLabel();
+      setTimeout(() => {
+        isAnimating = false;
+      }, 1500);
+    }
+
+    frames.forEach((frame) => {
+      frame.addEventListener('load', broadcastPageVisibility);
+    });
+
+    broadcastPageVisibility();
+    updateTheme();
+    updatePageLabel();
+  </script>
+
+  <script src="sketch.js"></script>
+</body>
+</html>

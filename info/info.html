@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Info</title>
+  <link rel="stylesheet" href="https://use.typekit.net/guk5ptg.css">
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="layout-container info-layout">
+    <div id="p5-bg" class="p5-bg" aria-hidden="true"></div>
+
+    <main class="info-main">
+
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+  <script src="./sketch.js"></script>
+  <script>
+    function setInfoSketchActive(isActive) {
+      if (typeof window.setSketchInfoActive === 'function') {
+        window.setSketchInfoActive(isActive);
+      }
+    }
+
+    window.addEventListener('message', (event) => {
+      const data = event.data;
+      if (!data || data.type !== 'pageVisibility') return;
+      setInfoSketchActive(Boolean(data.isActive));
+    });
+  </script>
+</body>
+</html>

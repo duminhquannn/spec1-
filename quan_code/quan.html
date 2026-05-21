@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quan</title>
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #1840f2;
+    }
+
+    #index-flow-frame {
+      display: block;
+      width: 100%;
+      height: 100vh;
+      border: 0;
+      background: #1840f2;
+    }
+  </style>
+</head>
+<body class="index-flow-active">
+  <iframe id="index-flow-frame" src="./index.html" title="Quan interactive section"></iframe>
+
+  <script src="./index-embed.js"></script>
+  <script>
+    (function () {
+      const frame = document.getElementById("index-flow-frame");
+      const bridgedMessages = new Set(["scrollDown", "scrollUp"]);
+
+      function notifyVisibility() {
+        if (window.UntangleIndexEmbed && typeof window.UntangleIndexEmbed.notifyVisibility === "function") {
+          window.UntangleIndexEmbed.notifyVisibility();
+        }
+      }
+
+      function setIndexFlowActive(isActive) {
+        document.body.classList.toggle("index-flow-active", Boolean(isActive));
+        notifyVisibility();
+      }
+
+      window.addEventListener("message", function (event) {
+        const data = event.data;
+
+        if (data && data.type === "pageVisibility") {
+          setIndexFlowActive(data.isActive);
+          return;
+        }
+
+        if (event.source !== frame.contentWindow && bridgedMessages.has(data) && frame.contentWindow) {
+          frame.contentWindow.postMessage(data, "*");
+        }
+      });
+
+      frame.addEventListener("load", notifyVisibility);
+      notifyVisibility();
+    })();
+  </script>
+</body>
+</html>
